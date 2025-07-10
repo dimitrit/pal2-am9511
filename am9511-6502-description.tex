@@ -266,8 +266,8 @@ complete the read operation.
 
 In order to see the timing associated with the 6502’s $RDY$ signal, in Figure 
 \ref{fig:read-ready}, $\overbar{RD}$ has been replaced with $RDY$. As shown
-in Figure \ref{fig:read-timing}, $\overbar{RD}$ has essentially the same timing as 
-$\overbar{CS}$ so they can be considered equivalent for our purposes here.
+in Figure \ref{fig:read-timing}, $\overbar{RD}$ has essentially the same timing 
+as $\overbar{CS}$ so they can be considered equivalent for our purposes here.
 
 Note that $RDY$ falls at virtually the same instant as $\overbar{CS}$ as the 
 first flip-flop is clocked to logic one by $\overbar{CS}$ whenever the 6502’s 
@@ -275,8 +275,8 @@ $R/\overbar{W}$ signal is high. Subsequently, the $\overbar{PAUSE}$ signal
 goes low, preventing the second flip-flop from clocking in logic one on 
 subsequent falling edges of PHI2. Before the third falling edge of $PHI2$, 
 $\overbar{PAUSE}$ rises, and subsequently the second flip-flop clocks in a 
-logic one, causing the first flip-flop to reset and asserting $RDY$. This allows 
-the read operation to be completed at the next rising edge of $PHI2$.
+logic one, causing the first flip-flop to reset and asserting $RDY$. This 
+allows the read operation to be completed at the next rising edge of $PHI2$.
 
 \begin{figure}[h]
 \centering
