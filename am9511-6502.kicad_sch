@@ -6525,7 +6525,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Local:ADA-TPS61040"
+		(property "Footprint" "am9511-6502-footprints:ADA-TPS61040"
 			(at 164.592 66.802 0)
 			(effects
 				(font
@@ -7265,7 +7265,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x18_P2.54mm_Horizontal"
+		(property "Footprint" "am9511-6502-footprints:PinHeader_1x18_P2.54mm_Horizontal"
 			(at 34.29 60.96 0)
 			(effects
 				(font
@@ -7514,7 +7514,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "LED_THT:LED_D5.0mm"
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 224.79 69.85 0)
 			(effects
 				(font
@@ -8112,7 +8112,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "LED_THT:LED_D5.0mm"
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 204.47 69.85 0)
 			(effects
 				(font
