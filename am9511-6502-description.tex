@@ -199,7 +199,7 @@ to use the time during which an operation is executing. One simple approach is
 to simply poll the BUSY flag in the AM9511's status register in a loop
 to determine when a requested operation has completed execution. 
 
-Alternatively, the hardware could make use of the $\overbar{END}$ (or the 
+Alternatively, the hardware could make use of the $\overbar{END}$ signal (or 
 $SVREQ$ signal) as an interrupt source to allow other work to be completed 
 concurrently while the AM9511 is executing operations. The module described 
 here can connect $\overbar{END}$ to the 6502's $\overbar{IRQ}$ input if desired.
