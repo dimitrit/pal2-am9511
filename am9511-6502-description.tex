@@ -179,8 +179,9 @@ The only other significant elements of the circuit are the 4 MHz clock
 oscillator and a boost converter.
 
 The AM9511A-4DC can run at 4 MHz. Other parts, such as the AM9511A-1DC require 
-a clock speed no greater than 3 MHz. Of course, the AM9511 could be clocked 
-from the system clock (with an appropriate divider circuit if necessary).
+a clock speed no greater than 3 MHz. I decided to use a dedicated on-board
+clock oscillator mostly as a matter of convenience. Of course, the AM9511 could
+be clocked by the system clock (with an appropriate divider circuit if necessary).
 
 The AM9511 requires a +12V DC bias input. I choose to use a boost converter
 since the current requirement is quite small, and doing so avoids the complication
@@ -194,13 +195,13 @@ The interface described herein does not provide a mechanism to wait after a writ
 operation. This means that even though the AM9511 asserts the $\overbar{PAUSE}$ 
 signal while executing a requested operation, the 6502 will not wait until the 
 requested operation is completed. This allows the programmer to decide how best 
-to usethe time during which an operation is executing. One simple approach is 
-to simply poll the BUSY flag in the flag in the AM9511's status register to 
-determine when a requested operation has completed execution. 
+to use the time during which an operation is executing. One simple approach is 
+to simply poll the BUSY flag in the AM9511's status register in a loop
+to determine when a requested operation has completed execution. 
 
 Alternatively, the hardware could make use of the $\overbar{END}$ (or the 
 $SVREQ$ signal) as an interrupt source to allow other work to be completed 
-concurrently while the AM9511A is executing operations. The module described 
+concurrently while the AM9511 is executing operations. The module described 
 here can connect $\overbar{END}$ to the 6502's $\overbar{IRQ}$ input if desired.
 The $\overbar{END}$ signal is an open-drain output, allowing it to be easily
 incorporated into a design that uses a wired-OR configuration for multiple
@@ -210,8 +211,8 @@ Furht and Lee\footnote{Furht, B and Lee, P: \emph{An Efficient Software Driver
 for AM9511 Arithmetic Processor Implementation}; June 1984; IEEE Micro, Volume 4
 Issue 3} describe an interrupt-driven approach for the 8085 microprocessor that
 could be adapted for the 6502. Using such a design, is it possible to enqueue a
-sequence of interdependent operations in main memory, placing operands and
-operations on the AM9511's stack as soon as it is able to accommodate them.
+sequence of interdependent operations in main memory, pushing operands and
+operations onto the AM9511's stack as soon as it is able to accommodate them.
 
 
 \pagebreak
@@ -229,7 +230,7 @@ only in the value of the $C/\overbar{D}$ signal (shown here as $A0$) -- it is
 high here signifying a write to the command register. Note that the 
 $\overbar{WR}$ pulse falls soon after the rising edge of $PHI2$ but rises 
 approximately 75 ns before either $\overbar{CS}$ or $A0$ changes state. This 
-satisfies what amounts to the most critical timing constraint of the AM9511A.
+satisfies what amounts to the most critical timing constraint of the AM9511.
 
 \begin{figure}[h]
 \centering
