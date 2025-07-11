@@ -1,25 +1,25 @@
 GAL16V8
-6502-APU
+AM9511-6502
 
-PHI2	CE	RWB	RESB	Q1	Q2 	A0	NC	NC	GND
-NC	NC	RDEN	RD	WR	RESET	CLK1	NC	NC	VCC	
+PHI2  CS    RWB   RESB  Q1    Q2    A0    NC    NC    GND
+NC    NC    RDEN  RD    WTRG  RESET CLK1  NC    NC    VCC	
 
 RDEN = Q1 + Q2
-/CLK1 = /CE*RWB
-/WR = PHI2*/CE*/RWB
-/RD = /CE*RWB*RDEN
+/CLK1 = /CS*RWB
+/WTRG = PHI2*/CS*/RWB
+/RD = /CS*RWB*RDEN
 /RESET = RESB
 
 DESCRIPTION
 Input signals PHI2, RWB, and RESB correspond to the clock and bus signals
-for the 6502. The active low CE input is a chip select that is asserted
+for the 6502. The active low CS input is a chip select that is asserted
 when the AM9511 is addressed. It is connected directly to the CS input 
 of the AM9511 in addition to being connected to the input pin here.
 
 Output signal RESET connects to the the AM9511 active high RESET signal.
 It simply inverts the RESB signal provided to the 6502.
 
-Output signal WR is an active low write signal that must be connected
+Output signal WTRG is an active low write signal that must be connected
 to a monostable multivibrator (e.g. 74123) as described in [2]. This allows
 the AM9511 WR signal to rise before CS rises or A0 changes. Otherwise,
 CS, WR, and A0 would all be subject to change on the falling edge of PHI2.
@@ -30,9 +30,9 @@ pulse width of approximately 75 ns. The AM9511 data sheet does not
 indicate a minimum pulse width, so this value was selected so as to be
 significantly less than one half of the PHI2 clock period.
 
-Ouput signal RD provides the corresponding active low RD signal input
+Output signal RD provides the corresponding active low RD signal input
 on the AM9511. It is not gated by the PHI2 clock, so it becomes active 
-as soon as CE is asserted when the 6502 is performing a read operation 
+as soon as CS is asserted when the 6502 is performing a read operation 
 (RWB is high). The falling edge of this signal clocks a JK flip-flop (FF1)
 whose J input is always high and whose K input is always low. The inverted
 output of this flip-flop is connected to the 6502 RDY pin. A second
@@ -42,7 +42,7 @@ reset input of FF1. The AM9511 active low PAUSE output is connected to
 the asynchronous reset pin of FF2.
 
 At the start of a read that addresses the AM9511, a 1 is clocked into
-FF1 by the falling edge of NAND(~CE, RWB). This pulls the RDY signal low.
+FF1 by the falling edge of NAND(~CS, RWB). This pulls the RDY signal low.
 At any subsequent falling edge of PHI2, if Q1 is 1, then J2 = Q1 and 
 therefore Q2 transitions to 1 and ~Q2 immediately resets FF1 to zero,
 asserting the 6502 RDY signal. If the AM9511 is asserting its PAUSE 

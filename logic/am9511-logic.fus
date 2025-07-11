@@ -40,7 +40,7 @@ Pin 16 = RESET        XOR = 0   AC1 = 1
  30  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  31  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
-Pin 15 = WR           XOR = 0   AC1 = 1
+Pin 15 = WTRG         XOR = 0   AC1 = 1
  32  ---- ---- ---- ---- ---- ---- ---- ----
  33  -xx- -x-- ---- ---- ---- ---- ---- ----
  34  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx

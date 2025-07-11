@@ -3,7 +3,7 @@
  Pin # | Name     | Pin Type
 -----------------------------
    1   | PHI2     | Input
-   2   | CE       | Input
+   2   | CS       | Input
    3   | RWB      | Input
    4   | RESB     | Input
    5   | Q1       | Input
@@ -16,7 +16,7 @@
   12   | NC       | NC
   13   | RDEN     | Output
   14   | RD       | Output
-  15   | WR       | Output
+  15   | WTRG     | Output
   16   | RESET    | Output
   17   | CLK1     | Output
   18   | NC       | NC
