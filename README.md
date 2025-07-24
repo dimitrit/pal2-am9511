@@ -6,6 +6,8 @@ The AMD AM9511 Arithmetic Processing Unit, first produced in the late
 point arithmetic and a variety of floating point trigonometric and 
 mathematical operations, for use with microprocessors of that period.
 
+![module photo](am9511-6502-photo.jpg)
+
 This repository provides schematics and board design for a module that
 can be connected to the 6502 bus interface, allowing the AM9511 to be 
 addressed as an I/O device. The design is adapted from the work of 
