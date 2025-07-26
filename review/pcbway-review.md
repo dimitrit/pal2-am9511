@@ -18,6 +18,8 @@ As you can see in the unboxing photos below, the boards were carefully packaged 
 
 As expected, the charge for shipping was the largest component of the overall cost. As a resident of United States, there were also cost components for VAT and tariffs.
 
+My experience with PCBWay's PCB Prototyping service was exceptional, and I will order from them again for future projects.
+
 ![Unboxing Photo 1](unbox-1.jpg)
 ![Unboxing Photo 2](unbox-2.jpg)
 ![Unboxing Photo 3](unbox-3.jpg)
