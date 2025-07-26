@@ -8,7 +8,7 @@ mathematical operations, for use with microprocessors of that period.
 
 ![module photo](am9511-6502-photo.jpg)
 
-> ![PCBWay Logo](images/pcbway-logo.png) This project was made possible, in part, by the generous sponsorship of PCBWay, who provided fabrication services in exchange for promotional consideration. Please [see my review](review/pcbway-review.md) of the service provided by PCBWay, and consider their services for your own projects.
+> [![PCBWay Logo](images/pcbway-logo.png)](https://pcbway.com) This project was made possible, in part, by the generous sponsorship of [PCBWay](https://pcbway.com), who provided fabrication services in exchange for promotional consideration. Please [see my review](review/pcbway-review.md) of the service provided by PCBWay, and consider their services for your own projects.
 
 This repository provides schematics and board design for a module that
 can be connected to the 6502 bus interface, allowing the AM9511 to be 
