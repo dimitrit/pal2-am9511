@@ -6,17 +6,18 @@ The AMD AM9511 Arithmetic Processing Unit, first produced in the late
 point arithmetic and a variety of floating point trigonometric and 
 mathematical operations, for use with microprocessors of that period.
 
+This repository provides schematics and board design for a module that
+can be connected to the 6502 bus interface, allowing the AM9511 to be 
+addressed as an I/O device in a 6502-based microcomputer.
+
 ![module photo](am9511-6502-photo.jpg)
 
 > [![PCBWay Logo](images/pcbway-logo.png)](https://pcbway.com) This project was made possible, in part, by the generous sponsorship of [PCBWay](https://pcbway.com), who provided fabrication services in exchange for promotional consideration. Please [see my review](review/pcbway-review.md) of the service provided by PCBWay, and consider their services for your own projects.
 
-This repository provides schematics and board design for a module that
-can be connected to the 6502 bus interface, allowing the AM9511 to be 
-addressed as an I/O device. The design is adapted from the work of 
-Kissel and Currie[1] in which they developed an experiment using a MOS 
-6502 microprocessor to control four AM9511A floating-point arithmetic units, 
-and from Hart’s MICROCRUNCH[2] which also used the AM9511A (Intel 8231A) 
-interfaced with a (Rockwell) 6502.
+The design is adapted from the work of Kissel and Currie[1] in which they 
+developed an experiment using a MOS 6502 microprocessor to control four 
+AM9511A floating-point arithmetic units, and from Hart’s MICROCRUNCH[2] 
+which also used the AM9511A (Intel 8231A) interfaced with a (Rockwell) 6502.
 
 See [am9511-6502-description.pdf](am9511-6502-description.pdf) for a
 full description of the interface circuit design and 
@@ -30,14 +31,18 @@ AM9511, by swapping the 4 MHz clock oscillator with a unit of an
 appropriately lower speed.
 
 The `logic` folder contains the programming details for the ATF16V8B
-used in the circuit, as produced by [Galette](https://github.com/simon-frankau/galette) from the `am9511-logic.pld` source file. The provided JEDEC file
+used in the circuit, as produced by [Galette](https://github.com/simon-frankau/galette) 
+from the `am9511-logic.pld` source file. The provided JEDEC file
 (`am9511-logic.jed`) can be easily programmed into an ATF16V8B using 
 [minipro](https://gitlab.com/DavidGriffith/minipro).
 
 Also included in the `docs` folder are source documents cited below, as 
 well as datasheets and supplementary documents for the AM9511.
 
-This repository contains the full KiCad sources for the schematic and a PCB design for the module. The PCB is designed in prototype form with a pin header suitable for connecting the module to a breadboard using Dupont type male-to-female ribbon cable.
+This repository contains the full KiCad sources for the schematic and 
+a PCB design for the module. The PCB is designed in prototype form with
+a pin header suitable for connecting the module to a breadboard using 
+Dupont type male-to-female ribbon cable.
 
 ![PCB Front](images/pcb-front.png)
 
