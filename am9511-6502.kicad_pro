@@ -454,6 +454,7 @@
       "single_global_label": "ignore",
       "unannotated": "error",
       "unconnected_wire_endpoint": "warning",
+      "undefined_netclass": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
       "wire_dangling": "error"
@@ -635,7 +636,7 @@
       "Root"
     ],
     [
-      "1253bf53-8160-4ac9-adc0-ad2136e38890",
+      "c9b1cc03-c93e-4f87-a592-e52c2b334e83",
       "Miscellany"
     ]
   ],
