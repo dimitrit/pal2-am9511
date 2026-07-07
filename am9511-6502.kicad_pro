@@ -637,7 +637,11 @@
     ],
     [
       "c9b1cc03-c93e-4f87-a592-e52c2b334e83",
-      "Miscellany"
+      "PAL-2 Interface"
+    ],
+    [
+      "d85514b9-e40a-4350-82a2-5ee1d084183c",
+      "Clock"
     ]
   ],
   "text_variables": {}
