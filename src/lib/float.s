@@ -1,9 +1,21 @@
+;******************************************************************************
+;                      AM9511 FLOATING POINT LIBRARY
+;
+; A floating point library for the AM9511, providing high performance fixed and
+; floating point arithmetic and a variety of floating point trigonometric and
+; mathematical operations.
+
+; The float to string and string to float routines included are based on code
+; published by Marvin L DeJong in the February and April 1981 editions of
+; COMPUTE! magazine.
+;******************************************************************************
+
 .export _ftostr, _strtof
 .importzp sreg, ptr1, tmp1, tmp2
 .import popax
 
 ;**************************************
-; KIM ROM routines
+; AM9511 IO addresses
 ;**************************************
 prtbyt		= $1e3b			; print two hex characters on tty
 outch		= $1ea0			; print ascii character on tty
@@ -24,16 +36,25 @@ dpflag:		.res 1			; decimal point flag
 esign:		.res 1			; set if minus sign in exponent
 eval:		.res 1			; value of decimal exponent after 'E'
 dexp:		.res 1			; value of decimal exponent
-accb:		.res 6			; temp accumulator
+accb:		.res 6			; temp binary accumulator
 bcda:		.res 5			; bcd accumumator
 
-acca		= ovflo			; acca is same as overflow
+acca		= ovflo			; point accumulator to overflow addres
 bcdn		= bcda+5
+
+;**************************************
+; Library functions
+;**************************************
 
 		.segment "CODE"
 
+;**************************************
+; Converts float f to ascii string
+;
+; char* __fastcall__ ftostr(char *str, float f);
+;**************************************
 .proc _ftostr
-		sta	bexp		; copy float from A/X/sreg/sreg+1
+		sta	bexp		; save float in A/X/sreg/sreg+1
 		stx	msb		; to working area
 		lda	sreg
 		sta	nmsb
@@ -196,10 +217,16 @@ arnd:		lda	#0		; null terminate result string
 .proc _stchr
 		ldy	tmp1		; get string index
 		sta	(ptr1),y	; save character in result string
+		jsr	outch
 		inc	tmp1		; and increase index
 		rts
 .endproc
 
+;**************************************
+; Converts ascii string to float
+;
+; float __fastcall__ strtof(char *str);
+;**************************************
 .proc _strtof
 		sta     ptr1            ; save input string pointer
         	stx     ptr1+1
@@ -215,7 +242,8 @@ clear:		sta	ovflo,x		;   this routine
 		beq	plus		; yes, parse next character
 		cmp	#'-'		; is it a minus sign?
 		bne	ntmns		; no, try decimal point
-		dec	mflag		; yes, set minus flag
+		lda	#$80		; yes, set minus flag
+		sta	mflag
 plus:		inc	tmp1		; increase input string index
 		ldy	tmp1
 		lda	(ptr1),y	; get next character from string
@@ -227,7 +255,7 @@ ntmns:		cmp	#'.'		; is it a decimal point?
 		bne	plus		; and process next character
 digit:		cmp	#'0'		; is the character a digit?
 		bcc	normiz		; no, then normalise mantissa
-		cmp	#'9'		; digits are between 0 and 9
+		cmp	#':'		; digits are between 0 and 9
 		bcs	normiz
 		jsr	_tenx		; it was a digit, so multiply
 		ldy	tmp1		; the accumulator by 10 and
@@ -249,11 +277,11 @@ addig:		lda	#$0		; accumulator
 		dec	dexp		; if set, decrease exponent
 		bmi	plus		; then get next character
 normiz:		jsr	_norm		; normalise the mantissa
-		sty	tmp2		; save number of left shifts
-		lda	#$20		; binary exponent is 32 -
-		sec			; number of left shifts that
-		sbc	tmp2		; norm took to make most
-		sta	bexp		; significant bit one
+		sty	bexp		; bexp is number of left shifts
+;		lda	#$20		; binary exponent is 32 -
+;		sec			; number of left shifts that
+;		sbc	tmp2		; norm took to make most
+;		sta	bexp		; significant bit one
 		lda	msb		; if the msb of the accumulator
 		bne	procexp		; is zero then the number is zero
 		jmp	finish
@@ -327,13 +355,24 @@ stlpls:		jsr	_tenx		; multiply by ten
 		dec	dexp		; for each times 10, decrement
 		bne	stlpls		; decimal exponent until it is zero
 finish:		lda	nmsb		; populate return value
-		sta	sreg
-		lda	nlsb
+		sta	sreg		; for AM9511 we only need 24 bits
+		lda	nlsb		; for the mantissa
 		sta	sreg+1
-		lda	bexp
 		ldx	msb
+		lda	bexp		; shift exponent sign from bit 7
+		and	#$3F		; to bit 6, then move mantissa
+		sta	tmp2		; sign into bit 7
+		lda 	bexp
+		and	#$80		; keep only exponent sign
+		lsr			; and shift to bit 6
+		ora	mflag		; merge with mantissa flag
+		ora	tmp2		; merge with exponent
 		rts
 .endproc
+
+;**************************************
+; 'Private' functions
+;**************************************
 
 ;
 ; Normalise the mantissa
@@ -378,27 +417,28 @@ br11:		rts			; all done
 .proc _tenx
 		clc			; shift accumulator left
 		ldx	#4		; accumulators contain 4 bytes so
-br1:		lda	acca,x		; X is set to four
+@0:		lda	acca,x		; X is set to four
 		rol	a		; shift byte left
 		sta	accb,x		; stor it in accumulator B
 		dex
-		bpl	br1		; loop to get next byte
+		bpl	@0		; loop to get next byte
 		ldx	#4		; now shift accumulator B left
 		clc			; once more to get 'times four'
-br2:		rol	accb,x		; shift 1 byte left
+@1:		rol	accb,x		; shift 1 byte left
 		dex
-		bpl	br2		; loop to get next byte
+		bpl	@1		; loop to get next byte
 		ldx	#4		; add accumulator a to accumulator b
 		clc			; to get a+4*a = 5*a
-br3:		lda	acca,x
+@2:		lda	acca,x
 		adc	accb,x
 		sta	acca,x		; result in accumulator a
 		dex
-		bpl	br3
+		bpl	@2
 		ldx	#4		; finally shift accumulator left
-br4:		rol	acca,x		; to get 2*5*a = 10*a
+		clc
+@3:		rol	acca,x		; to get 2*5*a = 10*a
 		dex
-		bpl	br4		; loop to next byte
+		bpl	@3		; loop to next byte
 		rts			; all done
 .endproc
 

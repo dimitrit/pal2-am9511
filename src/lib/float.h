@@ -37,5 +37,4 @@ char* __fastcall__ ftostr(char *str, float f);
 float __fastcall__ strtof(char *str);
 
 #endif /* __CC65__ */
-
 #endif /* _FLOAT_H_ */
