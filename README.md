@@ -1,5 +1,5 @@
-AM9511 Interface Module for the 6502
-====================================
+AM9511 Interface Module for the PAL-2
+=====================================
 
 The AMD AM9511 Arithmetic Processing Unit, first produced in the late 
 1970s, provides hardware support for high performance fixed and floating 
@@ -11,11 +11,12 @@ can be connected to the PAL-2 Expansion interface.
 
 ![module photo](am9511-6502-photo.jpg)
 
-The design is adapted from the work of Harris, who in turn adapted
-designs by Kissel and Currie[2] in which they developed an experiment 
-using a MOS 6502 microprocessor to control four AM9511A floating-point 
-arithmetic units, and from Hart’s MICROCRUNCH[3] which also used the 
-AM9511A (Intel 8231A) interfaced with a (Rockwell) 6502.
+The design is adapted from the work of Harris, who in turn based his
+implementation on designs by Kissel and Currie[2] in which they 
+developed an experiment using a MOS 6502 microprocessor to control 
+four AM9511A floating-point arithmetic units, and from Hart’s 
+MICROCRUNCH[3] which also used the AM9511A (Intel 8231A) interfaced 
+with a (Rockwell) 6502.
 
 See [am9511-6502-description.pdf](am9511-6502-description.pdf) for a
 full description of the interface circuit design and 
