@@ -2,7 +2,7 @@ CC=cl65
 CFLAGS=-c -t kim1
 LIB_PATH=../lib
 
-target = example.pap
+target = convert.pap
 
 default: all
 
