@@ -387,8 +387,8 @@ finish:		lda	nmsb		; populate return value
 ;
 .proc _norm
 		clc
-br6:		lda	ovflo		; any bits set in overflow byte?
-		beq	br5		; yes, so rotate right
+@0:		lda	ovflo		; any bits set in overflow byte?
+		beq	@1		; yes, so rotate right
 		lsr	ovflo		; no, then rotate left
 		ror	msb
 		ror	nmsb
@@ -396,27 +396,27 @@ br6:		lda	ovflo		; any bits set in overflow byte?
 		ror	lsb		; for each shift right, increase the
 		inc	bexp		; the binary exponent
 		clv			; force a jump back
-		bvc	br6
-br5:		bcc	br7		; did the last rotate result in a carry?
+		bvc	@0
+@1:		bcc	@3		; did the last rotate result in a carry?
 		ldx	#4		; yes, then round up the mantissa
-br8:		lda	acca,x
+@2:		lda	acca,x
 		adc	#0		; carry is set, so one is added
 		sta	acca,x
 		dex
-		bpl	br8
-		bmi	br6		; check overflo byte once more
-br7:		ldy	#$20		; y will limit the number of left
-br10:		lda	msb		; shifts to 32
-		bmi	br11		; if the mantissa has a one in bit 7
+		bpl	@2
+		bmi	@0		; check overflo byte once more
+@3:		ldy	#$20		; y will limit the number of left
+@4:		lda	msb		; shifts to 32
+		bmi	@6		; if the mantissa has a one in bit 7
 		clc			; then leave
 		ldx	#4
-br9:		rol	acca,x		; shift accumulator left one bit
+@5:		rol	acca,x		; shift accumulator left one bit
 		dex
-		bne	br9
+		bne	@5
 		dec	bexp		; decrement binary exponent for each
 		dey			; left shift
-		bne	br10		; no more than 32 bits shifted!
-br11:		rts			; all done
+		bne	@4		; no more than 32 bits shifted!
+@6:		rts			; all done
 .endproc
 
 ;
@@ -456,39 +456,39 @@ br11:		rts			; all done
 .proc _divten
 		lda	#0		; clear accumulator for use as reg
 		ldy	#40		; do 40 bit divide
-bra:		asl	ovflo		; ovflo will be used as 'guard' byte
+@0:		asl	ovflo		; ovflo will be used as 'guard' byte
 		rol	lsb		; roll one bit at a time into the
 		rol	nlsb		; accumulator which serves to hold
 		rol	nmsb		; the partial dividend
 		rol	msb
 		rol	a		; check to see if a is larger than
 		cmp	#10		; the divisor
-		bcc	brb		; no, decrease bit counter
+		bcc	@1		; no, decrease bit counter
 		sec			; yes, subtract divisor from a
 		sbc	#10
 		inc	ovflo		; set bit in the quotient
-brb:		dey			; decrease bit counter
-		bne	bra
-brc:		dec	bexp		; division is finished, now normalise
+@1:		dey			; decrease bit counter
+		bne	@0
+@2:		dec	bexp		; division is finished, now normalise
 		asl	ovflo		; for each shift left, decrease the
 		rol	lsb		; binary exponent
 		rol	nlsb		; rotate the mantissa left until a
 		rol	nmsb		; one is in the most significant bit
 		rol	msb
-		bpl	brc
+		bpl	@2
 		lda	ovflo		; if the most significant bit in the
-		bpl	bre		; guard byte is one, round up
+		bpl	@4		; guard byte is one, round up
 		sec			; add one
 		ldx	#4		; x is byte counter
-brd:		lda	acca,x		; get the lsb
+@3:		lda	acca,x		; get the lsb
 		adc	#0		; add the carry
 		sta	acca,x		; result into mantissa
 		dex
-		bpl	brd		; continue with addition
-		bcc	bre		; no carry from msb, so finish
+		bpl	@3		; continue with addition
+		bcc	@4		; no carry from msb, so finish
 		ror	msb		; put carry in bit 7
 		inc	bexp		; and increase binary exponent
-bre:		lda	#0		; clear ovflo position, then return
+@4:		lda	#0		; clear ovflo position, then return
 		sta	ovflo
 		rts
 .endproc
@@ -499,23 +499,23 @@ bre:		lda	#0		; clear ovflo position, then return
 .proc _convd
 		ldx	#5		; clear bcd accumulator
 		lda	#0
-brm:		sta	bcda,x		; zeros into bcd accumulator
+@0:		sta	bcda,x		; zeros into bcd accumulator
 		dex
-		bpl	brm
+		bpl	@0
 		sed			; set decimal mode for add
 		ldy	#$20		; y has number of bits to be converted
-brn:		asl	lsb		; rotate binary number into carry
+@1:		asl	lsb		; rotate binary number into carry
 		rol	nlsb
 		rol	nmsb
 		rol	msb
 		ldx	#$fb		; x will controll a 5 byte addition
-bro:		lda	bcdn,x		; get least significant byte of bsd
+@2:		lda	bcdn,x		; get least significant byte of bsd
 		adc	bcdn,x		; accumulator, add it to itself,
 		sta	bcdn,x		; then store
 		inx			; repeat until all 5 bytes have
-		bne	bro		; been added
+		bne	@2		; been added
 		dey			; get next bit from the binary number
-		bne	brn
+		bne	@1
 		cld			; back to binary mode
 		rts			; all done
 .endproc
