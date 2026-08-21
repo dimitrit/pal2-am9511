@@ -54,9 +54,19 @@ bcdn		= bcda+5
 ; char* __fastcall__ ftostr(char *str, float f);
 ;**************************************
 .proc _ftostr
-		sta	bexp		; save float in A/X/sreg/sreg+1
-		stx	msb		; to working area
-		lda	sreg
+		sta	bexp		; A contains exponent
+		bpl 	@0		; process AM9511 exponent
+		lda	#$80		; if bit 7 is set, then
+		sta	mflag		; set negative mantissa flag
+@0:		and	#$40		; now move exponent sign flag to
+		asl			; bit 7 and save
+		sta	tmp1
+		lda	bexp		; clear 2 most significant bits
+		and     #$3f
+		ora	tmp1		; add exponent flag
+		sta	bexp		; and save
+		stx	msb		; move rest of float from X/sreg/sreg+1
+		lda	sreg		; to working area
 		sta	nmsb
 		lda	sreg+1
 		sta	nlsb
@@ -66,7 +76,7 @@ bcdn		= bcda+5
 		sta	dexp		; clear digital exponent
 		sta	tmp1		; reset result string index
 		jsr	popax		; get pointer to result string
-		sta	ptr1
+		sta	ptr1		; and save
 		stx	ptr1+1
 begin:		lda	msb		; test msb to see if mantissa is zero
 		bne	bry
@@ -83,14 +93,14 @@ bry:		lda	bexp		; is binary exponent negative?
 brz:		lda	bexp		; compare binary exponent to 32
 		cmp	#$20
 		beq	bcd		; yes, convert binary to bcd
-		bcc	brw		; no, it's less than
+		bcc	brf		; no, it's less than
 		jsr	_divten		; no, it's greater
 		inc	dexp
 		clv
 		bvc	brz
-brw:		lda	#0		; clear overflow
+brf:		lda	#0		; clear overflow
 		sta	ovflo
-		jsr	_tenx		; multiply by 10
+brw:		jsr	_tenx		; multiply by 10
 		jsr	_norm		; then normalise
 		dec	dexp		; decrement decimal exponent
 		lda	bexp		; test binary exponent
@@ -142,7 +152,7 @@ brn:		lda	#$0b		; set digit counter to 11
 bri:		ldy	#4		; rotate bcd accumulator left to
 brh:		clc			; save most significant digits
 		ldx	#$fb		; but first bypass zeros
-brg:		rol	bcdn
+brg:		rol	bcdn,x
 		inx
 		bne	brg
 		rol	ovflo		; rotate digit into overflow
@@ -214,14 +224,6 @@ arnd:		lda	#0		; null terminate result string
 		rts			; and return
 .endproc
 
-.proc _stchr
-		ldy	tmp1		; get string index
-		sta	(ptr1),y	; save character in result string
-		jsr	outch
-		inc	tmp1		; and increase index
-		rts
-.endproc
-
 ;**************************************
 ; Converts ascii string to float
 ;
@@ -278,10 +280,6 @@ addig:		lda	#$0		; accumulator
 		bmi	plus		; then get next character
 normiz:		jsr	_norm		; normalise the mantissa
 		sty	bexp		; bexp is number of left shifts
-;		lda	#$20		; binary exponent is 32 -
-;		sec			; number of left shifts that
-;		sbc	tmp2		; norm took to make most
-;		sta	bexp		; significant bit one
 		lda	msb		; if the msb of the accumulator
 		bne	procexp		; is zero then the number is zero
 		jmp	finish
@@ -355,24 +353,34 @@ stlpls:		jsr	_tenx		; multiply by ten
 		dec	dexp		; for each times 10, decrement
 		bne	stlpls		; decimal exponent until it is zero
 finish:		lda	nmsb		; populate return value
-		sta	sreg		; for AM9511 we only need 24 bits
-		lda	nlsb		; for the mantissa
+		sta	sreg		; for AM9511 we only want 24 bits
+		lda	nlsb		; in the mantissa
 		sta	sreg+1
 		ldx	msb
-		lda	bexp		; shift exponent sign from bit 7
-		and	#$3F		; to bit 6, then move mantissa
-		sta	tmp2		; sign into bit 7
-		lda 	bexp
+		lda	bexp		; exponent also needs to be mangled:
+		and	#$3F		; move exponent sign from bit 7
+		sta	tmp2		; to bit 6, then move mantissa
+		lda 	bexp		; sign into bit 7
 		and	#$80		; keep only exponent sign
 		lsr			; and shift to bit 6
-		ora	mflag		; merge with mantissa flag
-		ora	tmp2		; merge with exponent
+		ora	mflag		; now add mantissa flag
+		ora	tmp2		; and remainder of exponent
 		rts
 .endproc
 
 ;**************************************
 ; 'Private' functions
 ;**************************************
+
+;
+; Append character in A to string
+;
+.proc _stchr
+		ldy	tmp1		; get string index
+		sta	(ptr1),y	; save character in result string
+		inc	tmp1		; and increase index
+		rts
+.endproc
 
 ;
 ; Normalise the mantissa
