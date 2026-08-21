@@ -2,6 +2,7 @@
 
 .export _cgetc, _cputc, _cputs, _cputhex8
 .export _kbhit, _gotoxy, _revers, _clrscr
+.export _cgets
 .import popa, pusha
 .importzp ptr1
 
@@ -19,7 +20,7 @@ sad		= $1740			; 6530 A data
 sbd		= $1742			; 6530 B data
 
 ;**************************************
-; Misc
+; Misc definitions
 ;**************************************
 esc		= $1b
 
@@ -125,7 +126,7 @@ reverse:	.byte	esc,"[7m",0
 clearscreen:	.byte 	esc,"[2J",0
 .endproc
 
-; Converts a hex value 0-0x63 to BCD 0-99
+; Converts an 8-bit hex value 0-0x63 to BCD 0-99
 .proc tobcd
 		sta	ptr1
 		lda	#0
