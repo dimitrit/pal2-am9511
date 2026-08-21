@@ -5,13 +5,14 @@
 
 /*
  * AM9511 floating point format
+*
+ * The AM9511 floating point format uses a 32-bit word, with fields as following
  *
  *   me
  *   sseeeeee mmmmmmmm mmmmmmmm mmmmmmmm
  *
- * The AM9511 floating point format uses a 32-bit word, with fields as following
- *    bits  description
- *    ----  -----------
+ *     bit  description
+ *     ---  -----------
  *      31  mantissa sign
  *      30  exponent sign
  *   29-24  unbiased 2s complement exponent

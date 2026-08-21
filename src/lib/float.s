@@ -11,6 +11,7 @@
 ;******************************************************************************
 
 .export _ftostr, _strtof
+.exportzp msb
 .importzp sreg, ptr1, tmp1, tmp2
 .import popax
 
