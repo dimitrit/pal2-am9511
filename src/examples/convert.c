@@ -1,7 +1,7 @@
 
 #include <conio.h>
 
-#include "float.h"
+#include <float.h>
 
 typedef union {
     float    f;
