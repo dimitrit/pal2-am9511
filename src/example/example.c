@@ -10,8 +10,8 @@ typedef union {
 
 // void __fastcall__ (*quux)(char c) = (void*)0x1ea0;
 
-char n[] = "12345";
-char m[12];
+char n[] = "1.3579";
+char m[20];
 
 int main (void) {
 	U u;
@@ -19,16 +19,21 @@ int main (void) {
 
 	cputs("\n\r");
 
+	cputs(n);
+
+	cputs(" -> ");
+
 	u.f = strtof(n);
 
 	for (i=0; i<4; i++) {
-		//u.b[i] = i;
 		cputhex8(u.b[i]);
 	}
 
-	cputs("\n\r");
+	cputs(" -> ");
 
 	ftostr(m, u.f);
 
 	cputs(m);
+
+	cputs("\n\r");
 }
