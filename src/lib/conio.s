@@ -46,7 +46,7 @@ nokey:		lda	#0		; return NULL
 .endproc
 
 ; Return a character from the tty. If there is no character available,
-; the function waits until the user does press a key.
+; the function waits until the user presses a key.
 .proc _cgetc
 		jsr	getch		; get character from tty
 		and     #$7f		; clear top bit
