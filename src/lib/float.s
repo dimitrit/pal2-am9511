@@ -11,7 +11,7 @@
 ;******************************************************************************
 
 .export _ftostr, _strtof
-.exportzp msb
+.exportzp msb, bexp
 .importzp sreg, ptr1, tmp1, tmp2
 .import popax
 
@@ -55,10 +55,17 @@ bcdn		= bcda+5
 ; char* __fastcall__ ftostr(char *str, float f);
 ;**************************************
 .proc _ftostr
-		sta	bexp		; A contains exponent
-		bpl 	@0		; process AM9511 exponent
-		lda	#$80		; if bit 7 is set, then
-		sta	mflag		; set negative mantissa flag
+		sta	tmp1		; save exponent
+		lda	#0
+		ldy	#21		; clear working area
+clear:		sta	ovflo,y
+		dey
+		bpl	clear
+		lda	tmp1		; move exponent to correct
+		sta	bexp		; field
+		bpl 	@0		; check if bit 7 is set?
+		ldy	#$80		; yes, set negative mantissa flag
+		sty	mflag
 @0:		and	#$40		; now move exponent sign flag to
 		asl			; bit 7 and save
 		sta	tmp1
@@ -72,9 +79,6 @@ bcdn		= bcda+5
 		lda	sreg+1
 		sta	nlsb
 		lda	#0
-		sta	lsb		; clear least significant byte
-		sta	ovflo		; clear overflow byte
-		sta	dexp		; clear digital exponent
 		sta	tmp1		; reset result string index
 		jsr	popax		; get pointer to result string
 		sta	ptr1		; and save

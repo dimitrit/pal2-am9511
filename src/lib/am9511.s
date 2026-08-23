@@ -8,7 +8,7 @@
 
 .export _apuexec
 .export _pushf, _readf
-.importzp sreg, msb
+.importzp sreg, msb, bexp
 .import popax
 
 .include "am9511.inc"
@@ -37,7 +37,10 @@ prtbyt		= $1e3b			; print two hex characters on tty
 .proc _apuexec
 		pha			; save command
 		jsr	_pollapu	; ensure AM9511 is ready
-		pla			; restore command
+		pla
+		pha
+		jsr	prtbyt		; restore command
+		pla
 		sta	apu_cmd		; execute command
 		rts			; and done!
 .endproc
@@ -64,11 +67,29 @@ prtbyt		= $1e3b			; print two hex characters on tty
 .proc _readf
 		jsr	_pollapu	; ensure AM9511 is ready
 		lda	apu_data	; read exponent
-		ldx	apu_data	; read msb
-		ldy	apu_data	; read nmsb
-		sty	sreg
-		ldy	apu_data	; read lsb
-		sty	sreg+1
+		sta	bexp
+		lda	apu_data	; read msb
+		sta	msb
+		lda	apu_data	; read nmsb
+		sta	msb+1
+		lda	apu_data
+		sta	msb+2		; read nlsb
+
+		ldx	#$fd
+		lda	bexp
+		jsr	prtbyt
+
+@0:		lda	msb+3,x
+		jsr	prtbyt
+		inx
+		bne	@0
+
+		ldx	msb		; get msb
+		lda	msb+1		; get nmsb
+		sta	sreg
+		lda	msb+2		; get nlsb
+		sta	sreg+1
+		lda	bexp		; get exponent
 		rts			; and return
 .endproc
 
@@ -79,6 +100,5 @@ prtbyt		= $1e3b			; print two hex characters on tty
 .proc _pollapu
 @0:		lda	apu_stat
 		bmi	@0		; while bit 7 set, apu is busy
-;		sta	status		; TODO: save apu status
 		rts
 .endproc
