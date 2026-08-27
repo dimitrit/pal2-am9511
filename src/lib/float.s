@@ -4,7 +4,7 @@
 ; A floating point library for the AM9511, providing high performance fixed and
 ; floating point arithmetic and a variety of floating point trigonometric and
 ; mathematical operations.
-
+;
 ; The float to string and string to float routines included are based on code
 ; published by Marvin L DeJong in the February and April 1981 editions of
 ; COMPUTE! magazine.
@@ -15,15 +15,10 @@
 .importzp sreg, ptr1, tmp1, tmp2
 .import popax
 
-;**************************************
-; AM9511 IO addresses
-;**************************************
-prtbyt		= $1e3b			; print two hex characters on tty
-outch		= $1ea0			; print ascii character on tty
-
-;**************************************
+;******************************************************************************
 ; Zero Page variables
-;**************************************
+;******************************************************************************
+
 		.segment "ZEROPAGE"
 
 ovflo:		.res 1			; overflow byte for accumulator
@@ -43,37 +38,36 @@ bcda:		.res 5			; bcd accumumator
 acca		= ovflo			; point accumulator to overflow addres
 bcdn		= bcda+5
 
-;**************************************
+;******************************************************************************
 ; Library functions
-;**************************************
+;******************************************************************************
+
 
 		.segment "CODE"
 
-;**************************************
+;******************************************************************************
 ; Converts float f to ascii string
 ;
 ; char* __fastcall__ ftostr(char *str, float f);
-;**************************************
+;******************************************************************************
 .proc _ftostr
-		sta	tmp1		; save exponent
-		lda	#0
-		ldy	#21		; clear working area
-clear:		sta	ovflo,y
-		dey
-		bpl	clear
-		lda	tmp1		; move exponent to correct
-		sta	bexp		; field
-		bpl 	@0		; check if bit 7 is set?
+		jsr	_clear		; clear working area
+		sta	tmp1		; save copy of exponent
+		sta	bexp		;   binary field
+		bpl 	brb		; check if bit 7 is set?
 		ldy	#$80		; yes, set negative mantissa flag
 		sty	mflag
-@0:		and	#$40		; now move exponent sign flag to
+brb:		and	#$40		; now move exponent sign flag to
 		asl			; bit 7 and save
 		sta	tmp1
 		lda	bexp		; clear 2 most significant bits
 		and     #$3f
 		ora	tmp1		; add exponent flag
 		sta	bexp		; and save
-		stx	msb		; move rest of float from X/sreg/sreg+1
+		bpl	brc		; is negative exponent?
+		ora	#$40		; yes, exponent is two's complement
+		sta	bexp		; so set bit 6 that was just cleared
+brc:		stx	msb		; move rest of float from X/sreg/sreg+1
 		lda	sreg		; to working area
 		sta	nmsb
 		lda	sreg+1
@@ -83,7 +77,9 @@ clear:		sta	ovflo,y
 		jsr	popax		; get pointer to result string
 		sta	ptr1		; and save
 		stx	ptr1+1
-begin:		lda	msb		; test msb to see if mantissa is zero
+begin:		lda	#0		; clear input string index
+		sta	tmp1
+		lda	msb		; test msb to see if mantissa is zero
 		bne	bry
 		lda	#'0'		; yes, set result string to zero
 		jsr	_stchr
@@ -229,21 +225,17 @@ arnd:		lda	#0		; null terminate result string
 		rts			; and return
 .endproc
 
-;**************************************
+;******************************************************************************
 ; Converts ascii string to float
 ;
 ; float __fastcall__ strtof(char *str);
-;**************************************
+;******************************************************************************
 .proc _strtof
 		sta     ptr1            ; save input string pointer
         	stx     ptr1+1
-		lda	#0		;
-		sta	tmp1		; clear input string index
-		ldx	#16		; clear all memory locations used by
-clear:		sta	ovflo,x		;   this routine
-		dex
-		bpl	clear		; next location if not done
-		ldy	tmp1
+		jsr	_clear		; clear working memory
+		ldy	#0		; clear input string index
+		sty	tmp1
 		lda	(ptr1),y	; get first char from input string
 		cmp	#'+'		; is it a plus sign?
 		beq	plus		; yes, parse next character
@@ -373,10 +365,27 @@ finish:		lda	nmsb		; populate return value
 		rts
 .endproc
 
-;**************************************
+;******************************************************************************
 ; 'Private' functions
-;**************************************
+;******************************************************************************
 
+;
+; Clear working area of memory used by conversion functions
+;
+.proc _clear
+		pha			; save a
+		txa			; save x
+		pha
+		lda	#0
+		ldx	#21		; clear all memory locations used by
+clear:		sta	ovflo,x		;   this routine
+		dex
+		bpl	clear		; next location if not done
+		pla			; restore x
+		tax
+		pla			; restore a
+		rts
+.endproc
 ;
 ; Append character in A to string
 ;
@@ -489,7 +498,7 @@ finish:		lda	nmsb		; populate return value
 		adc	#0		; add the carry
 		sta	acca,x		; result into mantissa
 		dex
-		bpl	@3		; continue with addition
+		bne	@3		; continue with addition
 		bcc	@4		; no carry from msb, so finish
 		ror	msb		; put carry in bit 7
 		inc	bexp		; and increase binary exponent
