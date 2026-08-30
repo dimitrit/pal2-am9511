@@ -20,9 +20,6 @@ am9511fn.o: am9511fn.c am9511.h
 %.lib: %.o
 	$(AR) a $@ $?
 
-%.o: %c
-	$(CC) -c -t kim1 $<
-
 clean:
 	@rm -f *.lst *.lib *.o
 
