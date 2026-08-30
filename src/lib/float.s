@@ -10,7 +10,7 @@
 ; COMPUTE! magazine.
 ;******************************************************************************
 
-.export _ftostr, _strtof
+.export _ftostr, _strtof, _fneg
 .exportzp msb, bexp
 .importzp sreg, ptr1, tmp1, tmp2
 .import popax
@@ -364,6 +364,17 @@ finish:		lda	nmsb		; populate return value
 		ora	tmp2		; and remainder of exponent
 		rts
 .endproc
+
+;******************************************************************************
+; Negates float
+;
+; float __fastcall__ fneg(float f);
+;******************************************************************************
+.proc _fneg
+		eor	#$80		; toggle mantissa sign bit
+		rts			; all done!
+.endproc
+
 
 ;******************************************************************************
 ; 'Private' functions
