@@ -13,9 +13,6 @@
 
 .include "am9511.inc"
 
-prtbyt		= $1e3b			; print two hex characters on tty
-
-
 ; ; -----------------------------------------------------------------
 ; ; Save 4-byte float in working area
 ; ; -----------------------------------------------------------------
@@ -37,9 +34,6 @@ prtbyt		= $1e3b			; print two hex characters on tty
 .proc _apuexec
 		pha			; save command
 		jsr	_pollapu	; ensure AM9511 is ready
-		pla
-		pha
-		jsr	prtbyt		; restore command
 		pla
 		sta	apu_cmd		; execute command
 		rts			; and done!
@@ -75,15 +69,6 @@ prtbyt		= $1e3b			; print two hex characters on tty
 		lda	apu_data
 		sta	msb+2		; read nlsb
 
-		ldx	#$fd
-		lda	bexp
-		jsr	prtbyt
-
-@0:		lda	msb+3,x
-		jsr	prtbyt
-		inx
-		bne	@0
-
 		ldx	msb		; get msb
 		lda	msb+1		; get nmsb
 		sta	sreg
@@ -98,7 +83,7 @@ prtbyt		= $1e3b			; print two hex characters on tty
 ; bit until operation has finsihed
 ; -----------------------------------------------------------------
 .proc _pollapu
-@0:		lda	apu_stat
+@0:		lda	apu_stat	; check AM9511 status
 		bmi	@0		; while bit 7 set, apu is busy
 		rts
 .endproc
