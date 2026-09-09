@@ -3840,6 +3840,16 @@
 		)
 		(uuid "b1882c39-f2d1-4c93-894d-866aab17a99d")
 	)
+	(text "$XX20"
+		(exclude_from_sim no)
+		(at 201.168 67.818 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "bf1236b5-800e-4019-a83a-58c57474a769")
+	)
 	(text "Row"
 		(exclude_from_sim no)
 		(at 59.944 98.552 0)
@@ -4005,6 +4015,10 @@
 		(uuid "02eb54e1-6fe5-4efa-bcf6-3e8ccec3a164")
 	)
 	(no_connect
+		(at 194.31 63.5)
+		(uuid "050f94b1-3cac-4e57-9527-45cb001b71d2")
+	)
+	(no_connect
 		(at 132.08 68.58)
 		(uuid "09fc524d-8174-4a28-be97-8bf8a8e56fd2")
 	)
@@ -4067,10 +4081,6 @@
 	(no_connect
 		(at 132.08 66.04)
 		(uuid "7a11a49d-b440-402a-be4a-9fd3b31c66e6")
-	)
-	(no_connect
-		(at 194.31 68.58)
-		(uuid "8c70dd87-4195-4654-9fe2-359e722703db")
 	)
 	(no_connect
 		(at 153.67 180.34)
@@ -4878,6 +4888,16 @@
 	)
 	(wire
 		(pts
+			(xy 194.31 68.58) (xy 205.74 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "581dd026-e960-4954-843c-9e1a3ea93e22")
+	)
+	(wire
+		(pts
 			(xy 46.99 41.91) (xy 53.34 41.91)
 		)
 		(stroke
@@ -5668,16 +5688,6 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 63.5) (xy 198.12 63.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f5f69c71-3d52-4a94-bdb2-cbf5b564d99a")
-	)
-	(wire
-		(pts
 			(xy 46.99 44.45) (xy 53.34 44.45)
 		)
 		(stroke
@@ -6250,7 +6260,7 @@
 	)
 	(hierarchical_label "~{CS}"
 		(shape bidirectional)
-		(at 198.12 63.5 0)
+		(at 205.74 68.58 0)
 		(effects
 			(font
 				(size 1.27 1.27)
