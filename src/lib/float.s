@@ -10,7 +10,7 @@
 ; COMPUTE! magazine.
 ;******************************************************************************
 
-.export _ftostr, _strtof, _fneg
+.export _ftostr, _strtof, _itof, _fneg
 .exportzp msb, bexp
 .importzp sreg, ptr1, tmp1, tmp2
 .import popax
@@ -349,7 +349,12 @@ stlpls:		jsr	_tenx		; multiply by ten
 		jsr	_norm		; then normalise the mantissa
 		dec	dexp		; for each times 10, decrement
 		bne	stlpls		; decimal exponent until it is zero
-finish:		lda	nmsb		; populate return value
+finish:		jsr	_result		; populate return value
+		rts			; and done
+.endproc
+
+.proc _result
+		lda	nmsb		; populate return value
 		sta	sreg		; for AM9511 we only want 24 bits
 		lda	nlsb		; in the mantissa
 		sta	sreg+1
@@ -363,6 +368,33 @@ finish:		lda	nmsb		; populate return value
 		ora	mflag		; now add mantissa flag
 		ora	tmp2		; and remainder of exponent
 		rts
+.endproc
+
+;******************************************************************************
+; Converts integer to float
+;
+; float __fastcall__ itof(int i);
+;******************************************************************************
+.proc _itof
+		jsr	_clear		; clear working area
+		stx	msb		; now save integer
+		sta	nmsb
+		lda	msb		; is it a negative value
+		bpl	@1		; no, go set exponenent
+		sec			; yes, calculate 2s complement
+		lda	#0
+		sbc	nmsb
+		sta	nmsb
+		lda	#0
+		sbc	msb
+		sta	msb
+		lda	#$80
+		sta	mflag		; set mantissa minus flag
+@1:		lda	#$10		; set exponent (int is 16 bits)
+		sta	bexp
+		jsr	_norm		; now go normalise
+		jsr	_result		; populate return value
+		rts			; and done
 .endproc
 
 ;******************************************************************************

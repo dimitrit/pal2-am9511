@@ -33,9 +33,12 @@ typedef struct {
 
 #define float unsigned long
 
-/* string convertion routines */
+/* string conversion routines */
 char* __fastcall__ ftostr(char *str, float f);
 float __fastcall__ strtof(char *str);
+
+/* integer conversion routines */
+float __fastcall__ itof(int i);
 
 /* */
 float __fastcall__ fneg(float f);
