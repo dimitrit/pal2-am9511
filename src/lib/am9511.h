@@ -37,11 +37,23 @@ float __fastcall__ readf();
 void __fastcall__ apuexec(unsigned char cmd);
 /* execute command*/
 
-
 /* AM9511 floating point functions */
 float __fastcall__ fadd(float a, float b);
 float __fastcall__ fsub(float a, float b);
 float __fastcall__ fmul(float a, float b);
 float __fastcall__ fdiv(float a, float b);
+
+/* 32 bit floating point derived operations */
+float __fastcall__ sqrt(float a);
+float __fastcall__ sin(float a);
+float __fastcall__ cos(float a);
+float __fastcall__ tan(float a);
+float __fastcall__ asin(float a);
+float __fastcall__ acos(float a);
+float __fastcall__ atan(float a);
+float __fastcall__ log(float a);
+float __fastcall__ ln(float a);
+float __fastcall__ exp(float a);
+float __fastcall__ pwr(float a, float b);
 
 #endif /* AM9511_H */
