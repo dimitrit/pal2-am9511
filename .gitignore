@@ -1,4 +1,5 @@
 .DS_Store
+.idea
 ~*
 *.zip
 *.bak
@@ -7,10 +8,15 @@
 *.fdb*
 *.fls
 *.log
+*.lbl
 *.lst
 *.map
 *.out
 *.o
+*.bin
+*.lib
+*.pap
+*.ptp
 *.synctex.gz
 fp-info-cache
 fp-lib-table
