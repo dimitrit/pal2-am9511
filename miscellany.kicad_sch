@@ -4071,10 +4071,6 @@
 		(uuid "6643b95d-8e67-414e-a5ac-1d8e411f6e6e")
 	)
 	(no_connect
-		(at 53.34 82.55)
-		(uuid "67188b36-cc2e-48f6-b08c-3fc1558f827e")
-	)
-	(no_connect
 		(at 73.66 44.45)
 		(uuid "6ef69aea-1540-4b80-9ed5-5f3f6bc248bf")
 	)
@@ -4895,6 +4891,16 @@
 			(type default)
 		)
 		(uuid "581dd026-e960-4954-843c-9e1a3ea93e22")
+	)
+	(wire
+		(pts
+			(xy 46.99 82.55) (xy 53.34 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5868cfa2-99d6-445f-b8a3-7db570305c8e")
 	)
 	(wire
 		(pts
@@ -6145,6 +6151,16 @@
 			(justify left bottom)
 		)
 		(uuid "cd3502ce-3b1b-4db4-ba48-41188280dd1f")
+	)
+	(label "K5"
+		(at 46.99 82.55 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "cedc235b-388f-4099-9afc-dcacc5d81a08")
 	)
 	(label "AB10"
 		(at 101.6 68.58 0)
